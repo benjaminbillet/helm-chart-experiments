@@ -1,0 +1,16 @@
+keyJsonPath: ""
+
+inputTopic: "in-memory-store-input"
+
+apiPort: 0
+
+brokers: "localhost:9092"
+
+# Customize 'dataflow' label
+dataflowName: "my-dataflow"
+
+# Customize 'instance' label
+instanceName: "api-poller-source"
+
+# Customize 'customer' label
+customerName: "global"

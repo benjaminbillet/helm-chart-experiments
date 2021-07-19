@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.instanceName }}
+  labels:
+    app: in-memory-store
+    instance: {{ .Values.instanceName }}
+    dataflow: {{ .Values.dataflowName }}
+    customer: {{ .Values.customerName }}
+    input1: {{ .Values.inputTopic }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      instance: {{ .Values.instanceName }}
+  template:
+    metadata:
+      labels:
+        app: in-memory-store
+        dataflow: {{ .Values.dataflowName }}
+        customer: {{ .Values.customerName }}
+    spec:
+      containers:
+        - name: in-memory-store-container
+          image: "benjaminbillet/in-memory-store:1.0.0"
+          resources:
+            requests:
+              cpu: 500m
+              memory: 256Mi
+          env:
+            - name: APP_ARGS
+              value: "--in-memory-store.key-json-path={{ .Values.keyJsonPath }} --server.port={{ .Values.apiPort }} --spring.cloud.stream.bindings.input.destination={{ .Values.inputTopic }} --spring.cloud.stream.kafka.binder.brokers={{ .Values.brokers }}"

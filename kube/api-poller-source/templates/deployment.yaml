@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.instanceName }}
+  labels:
+    app: api-poller-source
+    instance: {{ .Values.instanceName }}
+    dataflow: {{ .Values.dataflowName }}
+    customer: {{ .Values.customerName }}
+    output1: {{ .Values.outputTopic }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      instance: {{ .Values.instanceName }}
+  template:
+    metadata:
+      labels:
+        app: api-poller-source
+        dataflow: {{ .Values.dataflowName }}
+        customer: {{ .Values.customerName }}
+    spec:
+      containers:
+        - name: api-poller-source-container
+          image: "benjaminbillet/api-poller-source:1.0.0"
+          resources:
+            requests:
+              cpu: 500m
+              memory: 256Mi
+          env:
+            - name: APP_ARGS
+              value: "--api-poller.uri={{ .Values.endpointUri }} --spring.cloud.stream.bindings.output.destination={{ .Values.outputTopic }} --spring.cloud.stream.poller.fixedDelay={{ .Values.pollInterval }} --spring.cloud.stream.kafka.binder.brokers={{ .Values.brokers }}"

@@ -1,0 +1,15 @@
+joltSpecification: "[{\"operation\":\"sort\"}]"
+
+inputTopic: "jolt-transformer-input"
+outputTopic: "jolt-transformer-output"
+
+brokers: "localhost:9092"
+
+# Customize 'dataflow' label
+dataflowName: "my-dataflow"
+
+# Customize 'instance' label
+instanceName: "api-poller-source"
+
+# Customize 'customer' label
+customerName: "global"

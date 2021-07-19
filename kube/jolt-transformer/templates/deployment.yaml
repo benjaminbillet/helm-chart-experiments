@@ -1,0 +1,33 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.instanceName }}
+  labels:
+    app: jolt-transformer
+    instance: {{ .Values.instanceName }}
+    dataflow: {{ .Values.dataflowName }}
+    customer: {{ .Values.customerName }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      instance: {{ .Values.instanceName }}
+  template:
+    metadata:
+      labels:
+        app: jolt-transformer
+        dataflow: {{ .Values.dataflowName }}
+        customer: {{ .Values.customerName }}
+        input1: {{ .Values.inputTopic }}
+        output1: {{ .Values.outputTopic }}
+    spec:
+      containers:
+        - name: jolt-transformer-container
+          image: "benjaminbillet/jolt-transformer:1.0.0"
+          resources:
+            requests:
+              cpu: 500m
+              memory: 256Mi
+          env:
+            - name: APP_ARGS
+              value: "--jolt-transformer.jolt-specification={{ .Values.joltSpecification }} --spring.cloud.stream.bindings.input.destination={{ .Values.inputTopic }} --spring.cloud.stream.bindings.output.destination={{ .Values.outputTopic }} --spring.cloud.stream.kafka.binder.brokers={{ .Values.brokers }}"
