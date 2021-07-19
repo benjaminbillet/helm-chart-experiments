@@ -31,6 +31,28 @@ kubectl delete statefulset my-confluent-cp-kafka my-confluent-cp-zookeeper
 kubectl delete pvc --selector=release=my-confluent
 ```
 
+## Run JupyterHub in Kubernetes
+Download the charts:
+```
+helm repo add jupyterhub https://jupyterhub.github.io/helm-chart
+helm repo update
+```
+
+Run JupyterHub:
+```
+helm install my-jupyter jupyterhub/jupyterhub --version 1.0.1
+```
+
+Find the external IP/port of the load balancer (should be localhost:80):
+```
+kubectl describe service proxy-public
+```
+
+Kill the whole stack:
+```
+helm delete my-jupyter
+```
+
 ## Build
 
 JAR artifacts:
