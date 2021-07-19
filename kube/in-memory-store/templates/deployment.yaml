@@ -12,13 +12,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      instance: {{ .Values.instanceName }}
+      app: in-memory-store
   template:
     metadata:
       labels:
         app: in-memory-store
+        instance: {{ .Values.instanceName }}
         dataflow: {{ .Values.dataflowName }}
         customer: {{ .Values.customerName }}
+        input1: {{ .Values.inputTopic }}
     spec:
       containers:
         - name: in-memory-store-container

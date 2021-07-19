@@ -7,15 +7,18 @@ metadata:
     instance: {{ .Values.instanceName }}
     dataflow: {{ .Values.dataflowName }}
     customer: {{ .Values.customerName }}
+    input1: {{ .Values.inputTopic }}
+    output1: {{ .Values.outputTopic }}
 spec:
   replicas: 1
   selector:
     matchLabels:
-      instance: {{ .Values.instanceName }}
+      app: jolt-transformer
   template:
     metadata:
       labels:
         app: jolt-transformer
+        instance: {{ .Values.instanceName }}
         dataflow: {{ .Values.dataflowName }}
         customer: {{ .Values.customerName }}
         input1: {{ .Values.inputTopic }}
@@ -30,4 +33,4 @@ spec:
               memory: 256Mi
           env:
             - name: APP_ARGS
-              value: "--jolt-transformer.jolt-specification={{ .Values.joltSpecification }} --spring.cloud.stream.bindings.input.destination={{ .Values.inputTopic }} --spring.cloud.stream.bindings.output.destination={{ .Values.outputTopic }} --spring.cloud.stream.kafka.binder.brokers={{ .Values.brokers }}"
+              value: "--jolt-transformer.jolt-specification=b64:{{ .Values.joltSpecification }} --spring.cloud.stream.bindings.input.destination={{ .Values.inputTopic }} --spring.cloud.stream.bindings.output.destination={{ .Values.outputTopic }} --spring.cloud.stream.kafka.binder.brokers={{ .Values.brokers }}"

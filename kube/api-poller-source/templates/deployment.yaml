@@ -12,13 +12,15 @@ spec:
   replicas: 1
   selector:
     matchLabels:
-      instance: {{ .Values.instanceName }}
+      app: api-poller-source
   template:
     metadata:
       labels:
         app: api-poller-source
+        instance: {{ .Values.instanceName }}
         dataflow: {{ .Values.dataflowName }}
         customer: {{ .Values.customerName }}
+        output1: {{ .Values.outputTopic }}
     spec:
       containers:
         - name: api-poller-source-container

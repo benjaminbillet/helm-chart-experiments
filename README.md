@@ -51,11 +51,19 @@ docker build -f in-memory-store/Dockerfile -t benjaminbillet/in-memory-store:1.0
 
 ```
 helm install api-poller-source-1 ./kube/api-poller-source --set endpointUri="https://random-data-api.com/api/users/random_user",outputTopic=rawUsers,brokers=my-confluent-cp-kafka-headless:9092,dataflowName=my-dataflow,customerName=benjamin,instanceName=api-poller-source-1
-helm install jolt-transformer-1 ./kube/jolt-transformer --set inputTopic=rawUsers,outputTopic=users,brokers=my-confluent-cp-kafka-headless:9092,dataflowName=my-dataflow,customerName=benjamin,instanceName=jolt-transformer-1,joltSpecification="[{\"operation\":\"shift\",\"spec\":{\"uid\":\"userId\",\"first_name\":\"firstName\",\"last_name\":\"lastName\",\"email\":\"emailAddress\",\"address\":{\"coordinates\":{\"*\":\"location\"}}}},{\"operation\":\"default\",\"spec\":{\"type\":\"USER\"}},{\"operation\":\"sort\"}]"
+
+JOLT_SPEC=$(echo "[{\"operation\":\"shift\",\"spec\":{\"uid\":\"userId\",\"first_name\":\"firstName\",\"last_name\":\"lastName\",\"email\":\"emailAddress\",\"address\":{\"coordinates\":{\"*\":\"location\"}}}},{\"operation\":\"default\",\"spec\":{\"type\":\"USER\"}},{\"operation\":\"sort\"}]" | base64)
+helm install jolt-transformer-1 ./kube/jolt-transformer --set inputTopic=rawUsers,outputTopic=users,brokers=my-confluent-cp-kafka-headless:9092,dataflowName=my-dataflow,customerName=benjamin,instanceName=jolt-transformer-1,joltSpecification=$JOLT_SPEC
+
 helm install in-memory-store-1 ./kube/in-memory-store --set keyJsonPath="$.userId",apiPort=9999,inputTopic=users,brokers=my-confluent-cp-kafka-headless:9092,dataflowName=my-dataflow,customerName=benjamin,instanceName=in-memory-store-1
 
 # start a second in-memory-store in the same dataflow
-helm install in-memory-store-2 ./kube/in-memory-store --set keyJsonPath="$.userId",apiPort=9999,inputTopic=users,brokers=my-confluent-cp-kafka-headless:9092,dataflowName=my-dataflow,customerName=benjamin,instanceName=in-memory-store-2
+helm install in-memory-store-2 ./kube/in-memory-store --set keyJsonPath="$.userId",apiPort=9998,inputTopic=users,brokers=my-confluent-cp-kafka-headless:9092,dataflowName=my-dataflow,customerName=benjamin,instanceName=in-memory-store-2
+```
+
+Port forward for in-memory-store:
+```
+kubectl port-forward pod/in-memory-store-1-fd5f8586b-m8rdl 9999:9999
 ```
 
 Get logs:
@@ -70,6 +78,18 @@ Kill everthing:
 helm delete api-poller-source-1
 helm delete jolt-transformer-1
 helm delete in-memory-store-1
+```
+
+## Query with labels
+
+### Get a dataflow definition
+```
+kubectl get deployments --all-namespaces -o json -l dataflow=my-dataflow | jq ".items[] | { replicas: .status.replicas, labels: .metadata.labels }"
+```
+
+### Get resources consumed per customer
+```
+kubectl get pods --all-namespaces -o json -l customer=benjamin | jq ".items[] | { container: .metadata.name, status: .status.phase, app: .metadata.labels.app, dataflow: .metadata.labels.dataflow, instance: .metadata.labels.instance, resources: .spec.containers[].resources }"
 ```
 
 

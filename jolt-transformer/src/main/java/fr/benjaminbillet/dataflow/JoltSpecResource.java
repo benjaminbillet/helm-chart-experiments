@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 
 @Getter
 @Setter
@@ -19,6 +20,11 @@ public class JoltSpecResource {
 
   public JoltSpecResource(String data) {
     data = data.trim();
+
+    if (data.startsWith("b64:")) {
+      data = new String(Base64.getDecoder().decode(data.substring(4)), StandardCharsets.UTF_8);
+    }
+
 
     if (isValidJson(data)) {
       // this is an inline JOLT spec, take it directly
