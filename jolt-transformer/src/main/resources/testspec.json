@@ -1,0 +1,25 @@
+[
+  {
+    "operation": "shift",
+    "spec": {
+      "uid": "userId",
+      "first_name": "firstName",
+      "last_name": "lastName",
+      "email": "emailAddress",
+      "address": {
+        "coordinates": {
+          "*": "location"
+        }
+      }
+    }
+  },
+  {
+    "operation": "default",
+    "spec": {
+      "type": "USER"
+    }
+  },
+  {
+    "operation": "sort"
+  }
+]
