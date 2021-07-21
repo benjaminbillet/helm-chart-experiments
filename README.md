@@ -106,12 +106,16 @@ helm delete in-memory-store-1
 
 ### Get a dataflow definition
 ```
-kubectl get deployments --all-namespaces -o json -l dataflow=my-dataflow | jq ".items[] | { replicas: .status.replicas, labels: .metadata.labels }"
+kubectl get deployments --all-namespaces -o json -l dataflow=my-dataflow | jq ".items[] | { replicas: .status.replicas, labels: .metadata.labels }" | jq -s
+```
+With graph display:
+```
+kubectl get deployments --all-namespaces -o json -l dataflow=my-dataflow | jq ".items[] | { replicas: .status.replicas, labels: .metadata.labels }" | jq -s | python3 dot-to-ascii.py
 ```
 
 ### Get resources consumed per customer
 ```
-kubectl get pods --all-namespaces -o json -l customer=benjamin | jq ".items[] | { container: .metadata.name, status: .status.phase, app: .metadata.labels.app, dataflow: .metadata.labels.dataflow, instance: .metadata.labels.instance, resources: .spec.containers[].resources }"
+kubectl get pods --all-namespaces -o json -l customer=benjamin | jq ".items[] | { container: .metadata.name, status: .status.phase, app: .metadata.labels.app, dataflow: .metadata.labels.dataflow, instance: .metadata.labels.instance, resources: .spec.containers[].resources }" | jq -s
 ```
 
 
