@@ -1,0 +1,27 @@
+[
+  {
+    "assetClass": "fx",
+    "marketType": "axe",
+    "side": "{{0}}",
+    "legs": [
+      {
+        "instrument": {
+          "instrumentType": "fxswap",
+          "baseCurrency": "{{1}}",
+          "quoteCurrency": "{{2}}",
+          "tenor": "{{3}}"
+        },
+        "buySize": {{4}}
+      }
+    ],
+    "pricingInfo": [
+      {
+        "pricingType": "pips",
+        "bid": {
+          "value": "{{5}}"
+        }
+      }
+    ],
+    "comment": "{{6}}"
+  }
+]

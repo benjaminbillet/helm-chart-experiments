@@ -12,6 +12,7 @@
   <modules>
     <module>api-poller-source</module>
     <module>jolt-transformer</module>
+    <module>csv-to-json-transformer</module>
     <module>in-memory-store</module>
   </modules>
 
